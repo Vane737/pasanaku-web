@@ -1,7 +1,7 @@
 import { PauseCircleIcon, PlayCircleIcon, TrophyIcon } from "@heroicons/react/24/solid";
 
 // eslint-disable-next-line react/prop-types
-const CardIcon = ({ title, state, onClick, goInviteClick, goEditClick }) => {
+const CardIcon = ({ title, state, onClick, onClickInvite, onClickEdit }) => {
     return (
  
     <div 
@@ -10,9 +10,9 @@ const CardIcon = ({ title, state, onClick, goInviteClick, goEditClick }) => {
     >
         <div className="flex justify-between">
             <div className="flex justify-start items-start">
-                { state == 1 ? 
+                { state == 'Iniciada' ? 
                     <PlayCircleIcon className='text-iniciado w-11 mt-3'/>
-                    : state == 2 ?
+                    : state == 'Espera' ?
                     <PauseCircleIcon className='text-espera w-11 mt-3'/>
                     :
                     <span className="bg-finalizada rounded-full w-9 h-9 mt-3  ">
@@ -21,7 +21,7 @@ const CardIcon = ({ title, state, onClick, goInviteClick, goEditClick }) => {
                  }
                 <div className="mt-1 ml-2 text-color_secondary text-start">
                     <p className="font-bold">{title}</p> 
-                    <p className="text-sm mt-1"><span className="font-semibold">Estado: </span>{(state) == 1 ? "Iniciada": state == 2 ? "En espera": "Finalizada" }</p>
+                    <p className="text-sm mt-1"><span className="font-semibold">Estado: </span>{ state }</p>
                 </div>
 
             </div>
@@ -29,14 +29,14 @@ const CardIcon = ({ title, state, onClick, goInviteClick, goEditClick }) => {
                 <button
                     type="button"
                     className="text-sm rounded-md mt-1 bg-secondary_dark py-0 px-2 border-2  text-bg_white border-secondary_dark hover:bg-secondary font-medium"
-                    onClick={ goInviteClick }
+                    onClick={ onClickInvite }
                     >
                     Invitar
                 </button>
                 <button
                         type="button"
                         className="text-sm rounded-md mt-2 bg-bg_white border-secondary py-0 px-2 border-2 text-secondary hover:text-dark font-medium" 
-                        onClick={ goEditClick }
+                        onClick={ onClickEdit }
                     >
                         Editar
                 </button>

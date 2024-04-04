@@ -1,7 +1,7 @@
 // RegisterUser.js
 import { useEffect, useState } from "react";
 import { MyModalMessage } from "../../components/utils/MyModalMessage";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {  PaperAirplaneIcon, PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 // import api from '../../api/gatewayApi';
@@ -13,6 +13,7 @@ import CustomTab from "../../components/CustomTab";
 
 export const SendInvitation = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [invitados, setInvitados] = useState([
     {
       id: 1,
@@ -37,6 +38,7 @@ export const SendInvitation = () => {
     },
   ]);
 
+  const [partida, setPartida] = useState({});
   // const { nombre, telefono, ci, email, direccion, contraseña, formState, onInputChange } = useForm({
   const { nombre, telefono, email, formState, onInputChange } = useForm({
     nombre: "",
@@ -49,15 +51,28 @@ export const SendInvitation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAccept, setIsAccept] = useState(false);
 
+
+
+  // const obtenerInvitados = async () => {
+  //   try {
+  //     // Hacer una solicitud HTTP para obtener la lista de invitados de la partida
+  //     const response = await api.get(`/partida/${id}`);
+  //     setInvitados(response.data);
+  //   } catch (error) {
+  //     console.error("Error al obtener los invitados:", error);
+  //   }
+  // };
+
   useEffect(() => {
-    obtenerInvitados();
+    obtenerPartida();
   }, []);
 
-  const obtenerInvitados = async () => {
+  const obtenerPartida = async () => {
     try {
       // Hacer una solicitud HTTP para obtener la lista de invitados de la partida
-      const response = await api.get("/partida/invitados");
-      setInvitados(response.data);
+      const response = await api.get(`/partida/${id}`);
+      setPartida(response.data)
+      // setInvitados(response.data);
     } catch (error) {
       console.error("Error al obtener los invitados:", error);
     }
@@ -84,6 +99,15 @@ export const SendInvitation = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString); // Convertir la cadena a un objeto Date
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    return date.toLocaleDateString('es-ES', options); // Formatear la fecha según las opciones especificadas
+  }
+  
+  // const formattedDate = formatDate("2024-04-15T15:00:00.000Z");
+  // console.log(formattedDate); // Salida: "15/04/2024"
+
   const closeModal = ({ open, accept }) => {
     setIsOpen(open);
     setIsAccept(accept);
@@ -94,27 +118,27 @@ export const SendInvitation = () => {
       <div className="basis-3/12 bg-primary opacity-90">
         <div className="px-5 py-5 items-center h-72 border mx-10 mt-10 mb-5 bg-bg_white border-bg_gray rounded-lg">
           <h2 className="text-lg text-color_secondary font-extrabold">
-            Nombre de la partida
+            {partida.nombre}
           </h2>
           <p className="my-2">
-            <span className="text-color_secondary font-bold">Estado:</span> En
-            espera
+            <span className="text-color_secondary font-bold">Estado:</span>{" "}
+            {partida.estado}
           </p>
           <p className="my-2">
             <span className="text-color_secondary font-bold">Ronda:</span> 0
           </p>
           <p className="my-2">
-            <span className="text-color_secondary font-bold">Monto:</span> 1000
+            <span className="text-color_secondary font-bold">Monto:</span> {partida.pozo}
           </p>
           <p className="my-2">
             <span className="text-color_secondary font-bold">
               Participantes:
             </span>{" "}
-            15
+            {partida.participantes}
           </p>
           <p className="my-2">
             <span className="text-color_secondary font-bold">Inicia el:</span>{" "}
-            20-02-2024
+            {formatDate(partida.fechaInicio)}
           </p>
         </div>
         <div>

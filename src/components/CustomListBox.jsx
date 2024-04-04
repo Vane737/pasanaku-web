@@ -3,17 +3,18 @@ import PropTypes from 'prop-types';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
-const CustomListBox = ({ options, selected, setSelected, name }) => {
+const CustomListBox = ({ options, selected, setSelected }) => {
 
 
 
+  // console.log(options);
   return (
-    <Listbox name={name} value={ typeof selected === "number" ? options.find(option => option.id === selected ).nombre : selected } onChange={setSelected}>
+    <Listbox  value={ selected } onChange={setSelected} >
       {({ open }) => (
         <>
           <div className="relative mt-1 basis-1/2">
             <Listbox.Button className=" relative w-full cursor-default rounded-lg bg-input py-3 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
-              <span className="block truncate">{ typeof selected === "number" ? options.find(option => option.id === selected ).nombre : selected }</span>
+              <span className="block truncate">{ selected.nombre }</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </span>
@@ -39,7 +40,7 @@ const CustomListBox = ({ options, selected, setSelected, name }) => {
                     }
                     value={option}
                   >
-                    {({ selected, active }) => (
+                    {({ selected }) => (
                       <>
                         <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
                           {option.nombre}
@@ -66,7 +67,6 @@ CustomListBox.propTypes = {
   options: PropTypes.array.isRequired,
   selected: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.string]).isRequired,
   setSelected: PropTypes.func.isRequired,
-  name: PropTypes.string.isRequired
 };
 
 export default CustomListBox;

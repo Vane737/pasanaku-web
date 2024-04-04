@@ -1,12 +1,7 @@
 // RegisterUser.js
-import { Fragment, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MyModalMessage } from '../../components/utils/MyModalMessage';
 import { useNavigate } from 'react-router-dom';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
-import { Combobox, Listbox, Transition } from '@headlessui/react'
-
-// import api from '../../api/gatewayApi';
 import { useForm } from '../../hooks/useForm';
 import api from '../../apiAxios/axios';
 import CustomListBox from '../../components/CustomListBox';
@@ -15,56 +10,71 @@ import CustomListBox from '../../components/CustomListBox';
 
 const lapsos = [
   { id: 1, nombre: 'Semanal' },
-  { id: 2, nombre: 'Quincena' },
+  { id: 2, nombre: 'Quincenal' },
   { id: 3, nombre: 'Mensual' }
-]
-
-const monedas = [
-    { id: 1, nombre: 'Bs' },
-    { id: 2, nombre: '$us' }
 ]
 
 export const CreateGamePage = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [query, setQuery] = useState('')
-
-  // const { nombre, telefono, ci, email, direccion, contraseña, formState, onInputChange } = useForm({
-  const { nombre, cuotaInicial, participantes, moneda, pozo, lapso, habilitado, formState, onInputChange } = useForm({
-    nombre: '',
-    cuotaInicial: '',
-    participantes: '',
-    pozo: '',
-    lapso: lapsos[0].nombre,
-    habilitado: '',
-    moneda: monedas[0].id,
-    // contraseña: '',
-    cuentas: []
-  });
-  
+  const [monedas, setMonedas] = useState([]);
   const [message, setMessage] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isAccept, setIsAccept] = useState(false);
+  const [selectedCoin, setSelectedCoin] = useState({});
+  const [selectedLapso, setSelectedLapso] = useState(lapsos[0]);
   
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await api.get(`/moneda`);
+        if (response.status === 200) {
+          console.log(response);
+          setMonedas(response.data);
+          setSelectedCoin(response.data[0]);
+        } else {
+          console.error('Error al obtener roles:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error al obtener roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
   
-  
+    const { nombre, participantes, pozo , fechaInicio, formState, onInputChange } = useForm({
+      nombre: '',
+      pozo: 0,
+      participantes: 0,
+      fechaInicio:'',
+      lapso: lapsos[0].nombre,
+      estado: 'Espera',
+      monedaId: monedas.length > 0 ? monedas[0].id : '',
+    });
+
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try {
 
-        console.log(formState);
-          navigate('/mis-partidas/send-invitation');
-          // console.log('handlesubmit');
-          // await api
-          // .post(`/jugadores`, formState)
-          // .then((res) => {
-          //   console.log(res);
 
-          // })
-          // .catch((err) => {
-          //   console.log(err);
-          // });
-          // Realizar la solicitud HTTP para registrar al usuario
+        console.log(formState);
+        const formData = {
+          ...formState,
+          pozo: parseFloat(formState.pozo), // Parsear a número
+          participantes: parseInt(formState.participantes), // Parsear a entero
+          monedaId: formState.monedaId.toString(), // Convertir a cadena de texto
+        };
+        console.log(formData);
+          navigate('/');
+          await api
+          .post(`/partida`, formData)
+          .then((res) => {
+            console.log(res);
+
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         } catch(error) {
         
             console.log('entro al error try catch');
@@ -75,13 +85,12 @@ export const CreateGamePage = () => {
     setIsOpen(open);
     setIsAccept(accept);
   };
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
 
   return (
     <>
+      
+{       
+      monedas.length > 0 && 
         <section className=" container mx-auto px-40 py-8 items-center max-w-4xl border justify-center mt-5 border-gray-300 rounded-lg">
           <div className='flex text-center text-dark justify-center items-center mb-8'>
               <h2 className="text-2xl text-secondary_dark font-bold">
@@ -105,8 +114,8 @@ export const CreateGamePage = () => {
               <input
                   className="border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md "
                   type="date"
-                  name="habilitado"
-                  value= { habilitado }
+                  name="fechaInicio"
+                  value= { fechaInicio }
                   placeholder={'date'}
                   onChange={ onInputChange }
                 />
@@ -122,12 +131,12 @@ export const CreateGamePage = () => {
                     />
               </div>
               <div className='flex flex-row items-center my-6'>
-                <label className="basis-1/2 font-bold text-color_secondary ">Cuota inicial</label>
+                <label className="basis-1/2 font-bold text-color_secondary ">Monto total</label>
                 <input
                     className="basis-1/2 border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md"
                     type="number"
-                    name="cuotaInicial"
-                    value= { cuotaInicial }
+                    name="pozo"
+                    value= { pozo }
                     placeholder={'0,0'}
                     onChange={ onInputChange }
                     />
@@ -135,22 +144,22 @@ export const CreateGamePage = () => {
               </div>
               <div className='flex flex-row items-center mb-8'>
                 <label className="basis-1/2  font-bold text-color_secondary">Moneda</label>
-                {/* <CustomListBox className="basis-1/2" name="moneda" options={monedas} selected={ moneda } setSelected={ (value) => onInputChange({ target: { name: 'moneda', value } }) } /> */}
+              {    (monedas.length === 0) ? 
+                  <p>Cargando monedas...</p>
+                  :
                 <CustomListBox
                     className="basis-1/2"
-                    name="moneda"
                     options={monedas}
-                    selected={moneda}
-                    setSelected={(value) => onInputChange({ target: { name: 'moneda', value } })}
+                    selected={selectedCoin}
+                    setSelected={
+                      (value) => {
+                        console.log('desde el setselect',value);
+                        setSelectedCoin(value);
+                        onInputChange({ target: { name: 'monedaId', value } 
+                      })}}
+
                     />
-                {/* <input
-                    className="basis-1/2 border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md mb-3"
-                    type="text"
-                    name="moneda"
-                    value= { moneda }
-                    placeholder={'0,00'}
-                    onChange={ onInputChange }
-                    /> */}
+                }
               </div>
               <div className="w-full">
               <label className="block font-bold text-color_secondary mb-6">Duración de ronda</label>
@@ -158,8 +167,12 @@ export const CreateGamePage = () => {
                 <CustomListBox
                     name="lapso"
                     options={lapsos}
-                    selected={lapso}
-                    setSelected={(value) => onInputChange({ target: { name: 'lapso', value } })}
+                    selected={selectedLapso}
+                    setSelected={ 
+                      (value) => {
+                      setSelectedLapso(value)
+                      onInputChange({ target: { name: 'lapso', value }})
+                    }}
                     />
 
                 </div>
@@ -172,19 +185,12 @@ export const CreateGamePage = () => {
               </button>
             </form>
 
-            {/* <pre> { JSON.stringify(formState) } </pre> */}
+            {/* <pre> { JSON.stringify(monedas) } </pre> */}
 
           </div>
         {isOpen && <MyModalMessage Text={message} estados={closeModal} />}
       </section>
+      }
     </>
   );
 };
-  {/* <input
-      className="border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md mb-3"
-      type="password"
-      name="contraseña"
-      value= { contraseña }
-      placeholder={'Contraseña'}
-      onChange={ onInputChange }
-    /> */}

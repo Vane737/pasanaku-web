@@ -7,9 +7,8 @@ import logo from '../assets/Logo1.png';
 
 
 const navigation = [
-  { name: 'Dashboard', to: '/algo', current: false },
   { name: 'Home', to: '/', current: false },
-  { name: 'Acerca', to: '/acerca', current: false },
+  { name: 'Acerca', to: '/algo', current: false },
   { name: 'Contacto', to: '/algo', current: false },
 ]
 
@@ -21,10 +20,10 @@ export const  NavLoggin = () =>  {
   const location = useLocation();
     const navigate = useNavigate();
   const handleClickCreate = ()=>{
-    navigate(`register`);
+    navigate(`/register`);
   }
   const handleClickLoggin = ()=>{
-    navigate(`login`);
+    navigate(`/login`);
   }
 
     return (

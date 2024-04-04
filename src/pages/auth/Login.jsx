@@ -1,23 +1,19 @@
-// import {FormDynamicCreate} from '../../components/Form';
+
 import {Link, useNavigate } from 'react-router-dom'
-// import axios from '../../API/axios'
-import { useEffect, useState } from 'react';
-// import api from '../../API/axios';
-// import { MyModal } from '../../components/utils';
+import { useState } from 'react';
+
 import { MyModalMessage } from '../../components/utils/MyModalMessage';
-import { CameraIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid"; 
-import { FormLogin } from '../../components/Form/FormLogin';
+
 import api from '../../api/gatewayApi';
 import { useForm } from '../../hooks/useForm';
 import logo from '../../assets/Logo1.png';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
 export const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
-  const { contraseña, email, formState, onInputChange } = useForm({
+  const { password, email, formState, onInputChange } = useForm({
     email: '',
-    direccion: '',
-    contraseña: '',
-    cuentas: []
+    password: '',
   });
 
 
@@ -25,109 +21,33 @@ export const Login = () => {
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isAccept, setIsAccept] = useState(false);
-  const [roles, setRoles] = useState([]);
-  const [selectedRoleId, setSelectedRoleId] = useState('');
   
-
-
-
-  // const handleUser = () => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const token = localStorage.getItem("x-token");
-  //       const response = await api.get('/usuario/token', {
-  //         headers: {
-  //           "x-token": token
-  //         }
-  //       });
-
-  //       const usuario = response.data.usuario;
-
-  //       switch (usuario.rol.name) {
-  //         case 'Organizador':
-  //           return navigate('/organizer');
-  //         case 'Fotografo':
-  //           return navigate('/phographer');
-  //         default:
-  //           return navigate('/');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // };
-
-
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try {
-      navigate('/');
+      // navigate('/');
           // console.log(formState);
-          // console.log('handlesubmit');
-          // await api
-          // .post(`/jugadores`, formState)
-          // .then((res) => {
-          //   navigate('/home');
-          //   console.log(res);
-          // })
-          // .catch((err) => {
-          //   console.log(err);
-          // });
-          // Realizar la solicitud HTTP para registrar al usuario
+          await api
+          .post(`/jugadores/login`, formState)
+          .then((res) => {
+            localStorage.setItem("id", res.data.data.id);
+            console.log('se guardo en el localStorage');
+            // se guardo en el localStorage
+            navigate('/partidas');
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         } catch(error) {
-        
-            console.log('entro al error try catch');
+          console.log(error);
+          //       setMessage(errorMessage);
+          //     } else {
+          //       console.log("Error desconocido");
+          //       setMessage("Error desconocido");
+          //     }
           }
         };
-
-
-  // const handleSubmit = async (formdata) => {
-  //   try {
-  //     let apiEndpoint = '';
-  //     let urlRedirect = '';   
-  //     switch (selectedRoleId) {
-  //       case '2':
-  //         apiEndpoint = '/auth/photographer/signin';
-  //         urlRedirect = '/photographer';
-  //         api.post(apiEndpoint, formdata)
-  //         .then((response) => {na
-  //           if (response.data.error) {
-  //             setMessage(response.data.error);
-  //             setIsOpen(true);
-  //           } else {
-  //             const { id, token, email } = response.data;
-  //             localStorage.setItem('idPhoto', id);
-  //             setMessage('Usuario logueado exitosamente');
-  //             setIsOpen(true);
-  //               navigate(`${urlRedirect}`); // Redirigir al usuario a la página de inicio
-  //             }
-  //           })
-  //           break;
-  //           case '3':
-  //             apiEndpoint = '/auth/organizer/signin';
-  //             urlRedirect = '/organizer';
-  //             api.post(apiEndpoint, formdata)
-  //             .then((response) => {
-  //               if (response.data.error) {
-  //                 setMessage(response.data.error);
-  //                 setIsOpen(true);
-  //               } else {
-  //                 const { id, token, email } = response.data;
-  //                 localStorage.setItem('idOrg', id);
-  //                 setMessage('Usuario logueado exitosamente');
-  //                 setIsOpen(true);
-  //                   navigate(`${urlRedirect}`); // Redirigir al usuario a la página de inicio
-  //                 }
-  //               })
-  //         break;
-  //       default:
-  //         console.log('No se encontró ningún id que coincida');
-  //         return;
-  //     }
-
-  //       // console.log(response.data);
 
 
 
@@ -192,8 +112,8 @@ export const Login = () => {
           <input
             className="border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md mb-3"
             type={showPassword ? 'text' : 'password'}
-            name="contraseña"
-            value={ contraseña }
+            name="password"
+            value={ password }
             placeholder={'Contraseña'}
             onChange={onInputChange}
             autoComplete="current-password"

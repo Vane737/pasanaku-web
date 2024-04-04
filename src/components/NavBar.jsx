@@ -7,8 +7,8 @@ import logo from '../assets/Logo1.png';
 
 
 const navigation = [
-  { name: 'Home', to: '/home', current: false },
-  { name: 'Mis partidas', to: '/home', current: false },
+  { name: 'Home', to: '/partidas', current: false },
+  { name: 'Mis partidas', to: '/algo', current: false },
   { name: 'Reglas', to: '/reglas', current: false },
   { name: 'Acerca', to: '/acerca', current: false },
   { name: 'Contacto', to: '/contactanos', current: false },
@@ -29,7 +29,7 @@ export default function NavBar() {
               <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
                   <div className="flex-none w-56 items-center">
                   {/* <CameraIcon className="h-5 w-5 mr-2" /> */}
-                    <Link to="/" className="text-dark">
+                    <Link to="/partidas" className="text-dark">
                     <img className="w-48 object-cover" src={logo} alt="Card" />
                     </Link>
                   </div>
@@ -111,7 +111,7 @@ export default function NavBar() {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              to="/home"
+                              to="/"
                               className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                             >
                               Cerrar sesión
