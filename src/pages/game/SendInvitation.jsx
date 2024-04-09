@@ -107,7 +107,7 @@ export const SendInvitation = () => {
     try {
       console.log(idGame);
       await api
-      .post(`/invitacion/enviar/${ idGame }`)
+      .post(`/invitacion/enviarTodos/${ idGame }`)
       .then((res) => {
         console.log(res);
         setMessage("Invitaciones enviadas correctamente");
