@@ -1,112 +1,136 @@
-// RegisterUser.js
 import { useEffect, useState } from "react";
 import { MyModalMessage } from "../../components/utils/MyModalMessage";
 import { useNavigate, useParams } from "react-router-dom";
 import {  PaperAirplaneIcon, PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/solid";
-
-// import api from '../../api/gatewayApi';
-import { useForm } from "../../hooks/useForm";
+import { Tab } from '@headlessui/react';
 import api from "../../apiAxios/axios";
-import CustomTab from "../../components/CustomTab";
+import { useForm } from "../../hooks/useForm";
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
 
 
 export const SendInvitation = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [invitados, setInvitados] = useState([
-    {
-      id: 1,
-      nombre: "Juan Pérez",
-      telefono: "123456789",
-      email: "juan@example.com",
-      estado: "Pendiente",
-    },
-    {
-      id: 2,
-      nombre: "María Gómez",
-      telefono: "987654321",
-      email: "maria@example.com",
-      estado: "Aceptada",
-    },
-    {
-      id: 3,
-      nombre: "Pedro Rodríguez",
-      telefono: "555555555",
-      email: "pedro@example.comasdasdasdasdasd",
-      estado: "Rechazada",
-    },
-  ]);
-
-  const [partida, setPartida] = useState({});
-  // const { nombre, telefono, ci, email, direccion, contraseña, formState, onInputChange } = useForm({
+  const { idGame, idPart } = useParams();
   const { nombre, telefono, email, formState, onInputChange } = useForm({
-    nombre: "",
-    telefono: "",
-    email: "",
-    // contraseña: '',
+    nombre: '',
+    telefono: '',
+    email: '',
+    estado: 'Espera',
+    participanteId: parseInt(idPart)
   });
 
+  const [invitados, setInvitados] = useState([]);
+  const [participantes, setParticipantes] = useState([]);
+  const [partida, setPartida] = useState({});
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isAccept, setIsAccept] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("Invitados");
 
 
-
-  // const obtenerInvitados = async () => {
-  //   try {
-  //     // Hacer una solicitud HTTP para obtener la lista de invitados de la partida
-  //     const response = await api.get(`/partida/${id}`);
-  //     setInvitados(response.data);
-  //   } catch (error) {
-  //     console.error("Error al obtener los invitados:", error);
-  //   }
-  // };
-
-  useEffect(() => {
-    obtenerPartida();
-  }, []);
-
-  const obtenerPartida = async () => {
+  const obtenerInvitados = async () => {
     try {
-      // Hacer una solicitud HTTP para obtener la lista de invitados de la partida
-      const response = await api.get(`/partida/${id}`);
-      setPartida(response.data)
-      // setInvitados(response.data);
+      const response = await api.get(`/partida/${idGame}/invitados`);
+      setInvitados(response.data.data);
     } catch (error) {
       console.error("Error al obtener los invitados:", error);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const obtenerParticipantes = async () => {
+    try {
+      const response = await api.get(`/partida/${idGame}/participantes`);
+      setParticipantes(response.data.data);
+      console.log(response.data.data);
+    } catch (error) {
+      console.error("Error al obtener los participantes:", error);
+    }
+  };
+
+    const handleCreateInvitacion = async (e) => {
     e.preventDefault();
     try {
-      console.log(formState);
-      navigate("/");
+      // navigate("/");
       // console.log('handlesubmit');
-      // await api
-      // .post(`/jugadores`, formState)
-      // .then((res) => {
-      //   console.log(res);
-
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // });
+      await api
+      .post(`/invitacion`, formState)
+      .then((res) => {
+        console.log(res);
+        obtenerInvitados()
+      })
+      .catch((err) => {
+        console.log(err);
+      });
       // Realizar la solicitud HTTP para registrar al usuario
     } catch (error) {
       console.log("entro al error try catch");
     }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString); // Convertir la cadena a un objeto Date
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    return date.toLocaleDateString('es-ES', options); // Formatear la fecha según las opciones especificadas
-  }
-  
-  // const formattedDate = formatDate("2024-04-15T15:00:00.000Z");
-  // console.log(formattedDate); // Salida: "15/04/2024"
+  useEffect(() => {
+    obtenerPartida();
+    obtenerInvitados();
+  }, []);
+
+  const obtenerPartida = async () => {
+    try {
+      const response = await api.get(`/partida/${idGame}`);
+      setPartida(response.data);
+    } catch (error) {
+      console.error("Error al obtener la partida:", error);
+    }
+  };
+
+  const handleSubmit = async (id) => {
+    try {
+      console.log(id);
+      await api
+      .post(`/invitacion/enviar/${ id }`)
+      .then((res) => {
+        console.log(res);
+        setMessage("Invitación enviada correctamente");
+        setIsOpen(true);
+        obtenerInvitados()
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    } catch (error) {
+      console.log("Error al crear invitación:", error);
+    }
+  };
+  const handleAllSubmit = async() => {
+    try {
+      console.log(idGame);
+      await api
+      .post(`/invitacion/enviar/${ idGame }`)
+      .then((res) => {
+        console.log(res);
+        setMessage("Invitaciones enviadas correctamente");
+        setIsOpen(true);
+        obtenerInvitados();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    } catch (error) {
+      console.log("Error al crear invitación:", error);
+    }
+  };
+
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+    if (tab === "Invitados") {
+      obtenerInvitados();
+    } else if (tab === "Participantes") {
+      obtenerParticipantes();
+    }
+  };
 
   const closeModal = ({ open, accept }) => {
     setIsOpen(open);
@@ -138,7 +162,7 @@ export const SendInvitation = () => {
           </p>
           <p className="my-2">
             <span className="text-color_secondary font-bold">Inicia el:</span>{" "}
-            {formatDate(partida.fechaInicio)}
+            {new Date(partida.fechaInicio).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}
           </p>
         </div>
         <div>
@@ -147,13 +171,13 @@ export const SendInvitation = () => {
           </button>
         </div>
       </div>
-      <div className="basis-9/12 px-12">
-        <section className="px-20 py-8 w-full border mt-12 border-gray-300 rounded-lg">
-          <div className="flex flex-col justify-start ">
-            <h2 className="text-xl text-color_secondary font-bold">
-              Nueva invitación
-            </h2>
-            <form
+      
+        <div className="basis-9/12 px-12">
+         <section className="px-20 py-8 w-full border mt-12 border-gray-300 rounded-lg">
+           <div className="flex flex-col justify-start ">
+             <h2 className="text-xl text-color_secondary font-bold">   Nueva invitación
+             </h2>
+             <form
               onSubmit={handleSubmit}
               className="justify-between items-end w-full text-md"
             >
@@ -184,7 +208,7 @@ export const SendInvitation = () => {
                       value={telefono}
                       placeholder="Teléfono"
                       onChange={onInputChange}
-                    />
+                      />
                   </div>
                   <div className="flex flex-row items-center my-5">
                     <label className="basis-2/5 font-bold text-color_secondary">
@@ -196,7 +220,7 @@ export const SendInvitation = () => {
                       name="email"
                       value={email}
                       placeholder={"Correo"}
-                      autoComplete="username"
+                      onChange={onInputChange}
                     />
                   </div>
                 </div>
@@ -207,6 +231,7 @@ export const SendInvitation = () => {
                 <button
                   className="bg-secondary px-16 py-2 font-bold text-md text-bg_white rounded-md shadow-md "
                   type="submit"
+                  onClick={ handleCreateInvitacion }
                 >
                   Registrar
                 </button>
@@ -217,67 +242,145 @@ export const SendInvitation = () => {
           </div>
           {isOpen && <MyModalMessage Text={message} estados={closeModal} />}
         </section>
+
+
+
+
+
         <section className="px-20 py-8 w-full border mt-12 border-gray-300 rounded-lg">
           <div className="flex justify-between items-center">
             <h2 className="text-xl text-color_secondary font-bold">
               Lista de invitados
             </h2>
-            <CustomTab 
-              categories={["Recent", "Popular"]} 
-              onClick={(category) => console.log(`Selected category: ${category}`)} 
-            />
-
+            <Tab.Group>
+              <Tab.List className="flex space-x-1 rounded-md  border-bg_gray border-2 bg-secondary/30 p-1">
+                <Tab
+                  className={({ selected }) =>
+                  classNames(
+                    'w-full rounded-md py-2 px-10 text-sm font-bold leading-5 ',
+                    'ring-white/50 ring-offset-2 ring-offset-secondary_dark focus:outline-none focus:ring-2',
+                    selected
+                      ? 'bg-secondary/40 text-secondary_dark shadow'
+                      : 'text-secondary_dark hover:bg-white/[0.12] hover:text-secondary'
+                  )
+                  }
+                  onClick={() => handleTabChange("Invitados")}
+                >
+                  Invitados
+                </Tab>
+                <Tab
+                  className={({ selected }) =>
+                  classNames(
+                    'w-full rounded-md py-2 px-10 text-sm font-bold leading-5 ',
+                    'ring-white/50 ring-offset-2 ring-offset-secondary_dark focus:outline-none focus:ring-2',
+                    selected
+                      ? 'bg-secondary/40 text-secondary_dark shadow'
+                      : 'text-secondary_dark hover:bg-white/[0.12] hover:text-secondary'
+                  )
+                  }
+                  onClick={() => handleTabChange("Participantes")}
+                >
+                  Participantes
+                </Tab>
+              </Tab.List>
+            </Tab.Group>
             <button
               className="bg-secondary hover:bg-secondary_dark px-10 py-2 font-bold text-md text-bg_white rounded-md shadow-md"
-              type="submit"
+              onClick={ handleAllSubmit }
             >
               Invitar a todos
             </button>
           </div>
           <div>
             <div className="w-full my-6">
-              {invitados.map((invitado) => (
-                <div
-                  key={invitado.id}
-                  className="border border-gray-300 rounded-lg p-4 mb-4 flex justify-between items-center"
-                >
-                  <div className="flex space-x-4 mt-2 text-center">
-                    <h3 className="font-semibold w-36 text-color_primary">{invitado.nombre}</h3>
-                    <p className="text-color_secondary w-24">
-                      <span className="font-bold"></span> {invitado.telefono}
-                    </p>
-                    <p className="text-color_secondary w-60">
-                      <span className="font-bold"></span> {invitado.email}
-                    </p>
-                    <p className="text-color_primary w-36">
-                      <span className="font-extrabold"></span> {invitado.estado}
-                    </p>
+              {selectedTab === "Invitados" ? (
+                invitados.map((invitado) => (
+                  <div
+                    key={invitado.id}
+                    className="border border-gray-300 rounded-lg p-4 mb-4 flex justify-between items-center"
+                  >
+                    <div className="flex space-x-4 mt-2 text-center">
+                      <h3 className="font-semibold w-36 text-color_primary">{invitado.nombre}</h3>
+                      <p className="text-color_secondary w-24">
+                        <span className="font-bold"></span> {invitado.telefono}
+                      </p>
+                      <p className="text-color_secondary w-60">
+                        <span className="font-bold"></span> {invitado.email}
+                      </p>
+                      <p className="text-color_primary w-36">
+                        <span className="font-extrabold"></span> {invitado.estado}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold p-1 hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        onClick={ () => handleSubmit( invitado.id ) }
+                      >
+                        <PaperAirplaneIcon className="w-6 h-6 "/>
+                      </button>
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold p-1 hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        onClick={handleSubmit}
+                      >
+                        <PencilSquareIcon className="w-6 h-6 "/>
+                      </button>
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        onClick={handleSubmit}
+                      >
+                        <XMarkIcon className="w-8 h-8 "/>
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <button
-                      type="button"
-                      className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold p-1 hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      onClick={handleSubmit}
-                    >
-                      <PaperAirplaneIcon className="w-6 h-6 "/>
-                    </button>
-                    <button
-                      type="button"
-                      className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold p-1 hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      onClick={handleSubmit}
-                    >
-                      <PencilSquareIcon className="w-6 h-6 "/>
-                    </button>
-                    <button
-                      type="button"
-                      className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      onClick={handleSubmit}
-                    >
-                      <XMarkIcon className="w-8 h-8 "/>
-                    </button>
+                ))
+              ) : (
+                  participantes.map(( participante ) => (
+                  <div
+                    key={participante.id}
+                    className="border border-gray-300 rounded-lg p-4 mb-4 flex justify-between items-center"
+                  >
+                    <div className="flex space-x-4 mt-2 text-center">
+                      <h3 className="font-semibold w-36 text-color_primary">{participante.jugador.nombre}</h3>
+                      <p className="text-color_secondary w-24">
+                        <span className="font-bold"></span> {participante.jugador.telefono}
+                      </p>
+                      <p className="text-color_secondary w-60">
+                        <span className="font-bold"></span> {participante.jugador.email}
+                      </p>
+                      <p className="text-color_primary w-36">
+                        <span className="font-extrabold"></span> {participante.rol.nombre}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold p-1 hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        onClick={() => handleSubmit( participante.id )}
+                      >
+                        <PaperAirplaneIcon className="w-6 h-6 "/>
+                      </button>
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold p-1 hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        onClick={handleSubmit}
+                      >
+                        <PencilSquareIcon className="w-6 h-6 "/>
+                      </button>
+                      <button
+                        type="button"
+                        className="relative rounded-md bg-bg_white  border-secondary hover:border-secondary_dark border-2 font-bold hover:text-secondary_dark text-secondary hover:bg-opacity-90 hover:text-dark focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        onClick={handleSubmit}
+                      >
+                        <XMarkIcon className="w-8 h-8 "/>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )
+              }
             </div>
           </div>
         </section>

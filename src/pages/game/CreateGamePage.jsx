@@ -22,7 +22,8 @@ export const CreateGamePage = () => {
   const [isAccept, setIsAccept] = useState(false);
   const [selectedCoin, setSelectedCoin] = useState({});
   const [selectedLapso, setSelectedLapso] = useState(lapsos[0]);
-  
+  const id =  localStorage.getItem('id');
+
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -49,7 +50,7 @@ export const CreateGamePage = () => {
       fechaInicio:'',
       lapso: lapsos[0].nombre,
       estado: 'Espera',
-      monedaId: monedas.length > 0 ? monedas[0].id : '',
+      monedaId: monedas.length > 0 ? monedas[0].id : 1,
     });
 
   const handleSubmit = async (e)=>{
@@ -57,19 +58,20 @@ export const CreateGamePage = () => {
     try {
 
 
-        console.log(formState);
+        // console.log(formState);
         const formData = {
           ...formState,
           pozo: parseFloat(formState.pozo), // Parsear a número
           participantes: parseInt(formState.participantes), // Parsear a entero
-          monedaId: formState.monedaId.toString(), // Convertir a cadena de texto
+          monedaId: parseInt(formState.monedaId), // Convertir a cadena de texto
         };
-        console.log(formData);
-          navigate('/');
+        const idJugador = parseInt(id);
+        console.log( {createPartidaDto: formData, idJugador});
+          // navigate('/');
           await api
-          .post(`/partida`, formData)
+          .post(`/partida`,  {createPartidaDto: formData, idJugador})
           .then((res) => {
-            console.log(res);
+            console.log('Respuesta correcta',res);
 
           })
           .catch((err) => {

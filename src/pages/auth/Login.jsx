@@ -130,7 +130,7 @@ export const Login = () => {
           className='w-full bg-primary my-5 px-3 py-2 font-semibold text-md text-secondary_dark rounded-sm shadow-md'
           type="submit"
           >
-          Registrar
+          Iniciar sesión
         </button>
         {/* <p></p> */}
         <div className='text-center'>

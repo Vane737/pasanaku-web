@@ -6,9 +6,9 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-const CustomTab = ({ categories, onClick }) => {
+const CustomTab = ({ categories, onClickInvite, onClickPart }) => {
   const [selected, setSelected] = useState(categories[0]);
-
+  console.log(selected);
   return (
     <Tab.Group>
       <Tab.List className="flex space-x-1 rounded-md  border-bg_gray border-2 bg-secondary/30 p-1">
@@ -26,7 +26,7 @@ const CustomTab = ({ categories, onClick }) => {
             }
             onClick={() => {
               setSelected(category);
-              onClick(category);
+              selected === 'Invitados' ? onClickInvite() : onClickPart();
             }}
           >
             {category}
@@ -39,6 +39,7 @@ const CustomTab = ({ categories, onClick }) => {
 };
 CustomTab.propTypes = {
   categories: PropTypes.array.isRequired,
-  onclick: PropTypes.func.isRequired,
+  onClickInvite: PropTypes.func.isRequired,
+  onClickPart: PropTypes.func.isRequired,
 }; 
 export default CustomTab;

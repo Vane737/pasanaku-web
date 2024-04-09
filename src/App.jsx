@@ -11,11 +11,6 @@ import { SendInvitation } from './pages/game/SendInvitation';
 
 
 const App = () => {
-  const idPhoto = localStorage.getItem('idPhoto') ?? 1 ;
-  const idOrg = localStorage.getItem('idOrg') ?? 1 ;
-  console.log(idOrg);
-  console.log(idPhoto);
-
 
   return (
     <div className=''>
@@ -38,8 +33,8 @@ const App = () => {
           </div> 
         }>
             <Route index element={<HomePage /> } />                           {/* Ver Fotografias */}
-            <Route path='create' element={<CreateGamePage /> } />               {/* Ver editar */}
-            <Route path='invite/:id' element={<SendInvitation /> } />               {/* Ver editar */}
+            <Route path='create/:id' element={<CreateGamePage /> } />               {/* Ver editar */}
+            <Route path='partida/:idGame/invite/:idPart/' element={<SendInvitation /> } />               {/* Ver editar */}
           </Route>
 
           <Route path='/mis-partidas' 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 // eslint-disable-next-line react/prop-types
 export const MyModalMessage = ({estados, Text}) => {
-  const onClickAccept = (IsOpen,IsAccept)=>{
+  const onClickAccept = (IsOpen, IsAccept)=>{
     estados({
       open:IsOpen,
       accept:IsAccept
