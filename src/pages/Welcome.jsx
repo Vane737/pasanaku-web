@@ -1,31 +1,29 @@
 import { useNavigate } from "react-router-dom";
 
 import banner from '../assets/banner.png';
-import { useEffect } from "react";
-import api from "../api/gatewayApi";
 
 export const Welcome = () => {
   const navigate = useNavigate();
   // const idUser = localStorage.removeItem('idUser');
   // console.log(idUser);
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await api.get(`/partida`);
-        if (response.status === 200) {
-          console.log(response.data);
-          // setMonedas(response.data);
-        } else {
-          console.error('Error al obtener roles:', response.statusText);
-        }
-      } catch (error) {
-        console.error('Error al obtener roles:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchRoles = async () => {
+  //     try {
+  //       const response = await api.get(`/partida`);
+  //       if (response.status === 200) {
+  //         console.log(response.data);
+  //         // setMonedas(response.data);
+  //       } else {
+  //         console.error('Error al obtener roles:', response.statusText);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error al obtener roles:', error);
+  //     }
+  //   };
 
-    fetchRoles();
-  }, []);
+  //   fetchRoles();
+  // }, []);
 
 
   const handleClickCreate = ()=>{

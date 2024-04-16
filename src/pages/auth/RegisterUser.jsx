@@ -3,10 +3,8 @@ import { useState } from 'react';
 import { MyModalMessage } from '../../components/utils/MyModalMessage';
 import { useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
-// import api from '../../api/gatewayApi';
 import { useForm } from '../../hooks/useForm';
 import api from '../../apiAxios/axios';
-// import axios from '../../api/gatewayApi'; // Asumiendo que tienes un archivo axios para manejar tus solicitudes HTTP
 
 
 

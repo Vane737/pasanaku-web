@@ -10,7 +10,7 @@ import CustomListBox from '../../components/CustomListBox';
 
 const lapsos = [
   { id: 1, nombre: 'Semanal' },
-  { id: 2, nombre: 'Quincenal' },
+  { id: 2, nombre: 'Bisemanal' },
   { id: 3, nombre: 'Mensual' }
 ]
 
@@ -28,15 +28,15 @@ export const CreateGamePage = () => {
     const fetchRoles = async () => {
       try {
         const response = await api.get(`/moneda`);
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 201 ) {
           console.log(response);
           setMonedas(response.data);
           setSelectedCoin(response.data[0]);
         } else {
-          console.error('Error al obtener roles:', response.statusText);
+          console.error('Error al obtener monedas:', response.statusText);
         }
       } catch (error) {
-        console.error('Error al obtener roles:', error);
+        console.error('Error al obtener Monedas:', error);
       }
     };
 
@@ -67,15 +67,16 @@ export const CreateGamePage = () => {
         };
         const idJugador = parseInt(id);
         console.log( {createPartidaDto: formData, idJugador});
-          // navigate('/');
-          await api
-          .post(`/partida`,  {createPartidaDto: formData, idJugador})
-          .then((res) => {
-            console.log('Respuesta correcta',res);
+        await api
+        .post(`/partida`,  {createPartidaDto: formData, idJugador})
+        .then((res) => {
+          console.log('Respuesta correcta',res.data.id);
+          // navigate(`partida/${ res.data.id }/invite/${ idPart }`)
+          navigate('/partidas');
 
           })
           .catch((err) => {
-            console.log(err);
+            console.log('Ha ocurrido un error', err);
           });
         } catch(error) {
         

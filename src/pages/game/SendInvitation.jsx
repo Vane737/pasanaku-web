@@ -23,7 +23,7 @@ export const SendInvitation = () => {
   });
 
   const [invitados, setInvitados] = useState([]);
-  const [participantes, setParticipantes] = useState([]);
+  const [participantes, setParticipantes] = useState(null);
   const [partida, setPartida] = useState({});
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +44,7 @@ export const SendInvitation = () => {
     try {
       const response = await api.get(`/partida/${idGame}/participantes`);
       setParticipantes(response.data.data);
-      console.log(response.data.data);
+      console.log('Participantes: ' ,response.data.data);
     } catch (error) {
       console.error("Error al obtener los participantes:", error);
     }
@@ -337,6 +337,7 @@ export const SendInvitation = () => {
                   </div>
                 ))
               ) : (
+                participantes ? (
                   participantes.map(( participante ) => (
                   <div
                     key={participante.id}
@@ -379,6 +380,9 @@ export const SendInvitation = () => {
                     </div>
                   </div>
                 ))
+              )
+              :
+              <p>No hay participantes registrados en la partida aún</p>
               )
               }
             </div>
