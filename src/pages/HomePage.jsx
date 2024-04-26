@@ -9,13 +9,14 @@ import api from "../apiAxios/axios";
 export const HomePage = () => {
   
   const navigate = useNavigate();
+  
   const [partidas, setPertidas] = useState([]);
   const id =  localStorage.getItem('id');
   console.log(id);
 
 
   useEffect(() => {
-    const fetchRoles = async () => {
+    const fetchPartidas = async () => {
       try {
         const response = await api.get(`/jugadores/${ id }/participaciones`);
         if (response.status === 200) {
@@ -29,7 +30,7 @@ export const HomePage = () => {
       }
     };
 
-    fetchRoles();
+    fetchPartidas();
   }, []);
 
   // const handleClickEdit = ( id )=>{

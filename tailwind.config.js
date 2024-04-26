@@ -20,6 +20,9 @@ export default {
         finalizada: '#ED2323',
         table: '#FFFFF0'
       },
+      height: {
+        'screen-minus-navbar': 'calc(100vh - 80px)',
+      },
     },
   },
   plugins: [],

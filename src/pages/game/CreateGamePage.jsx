@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import api from '../../apiAxios/axios';
 import CustomListBox from '../../components/CustomListBox';
-// import axios from '../../api/gatewayApi'; // Asumiendo que tienes un archivo axios para manejar tus solicitudes HTTP
 
 
 const lapsos = [
@@ -43,11 +42,12 @@ export const CreateGamePage = () => {
     fetchRoles();
   }, []);
   
-    const { nombre, participantes, pozo , fechaInicio, formState, onInputChange } = useForm({
+    const { nombre, participantes, coutaInicial , fechaInicio, horaInicio, formState, onInputChange } = useForm({
       nombre: '',
-      pozo: 0,
+      coutaInicial: 0,
       participantes: 0,
       fechaInicio:'',
+      horaInicio:'',
       lapso: lapsos[0].nombre,
       estado: 'Espera',
       monedaId: monedas.length > 0 ? monedas[0].id : 1,
@@ -57,13 +57,14 @@ export const CreateGamePage = () => {
     e.preventDefault();
     try {
 
-
+      const fechaISO = `${formState.fechaInicio}T${formState.horaInicio}:00Z`;
         // console.log(formState);
         const formData = {
           ...formState,
-          pozo: parseFloat(formState.pozo), // Parsear a número
+          coutaInicial: parseFloat(formState.coutaInicial), // Parsear a número
           participantes: parseInt(formState.participantes), // Parsear a entero
           monedaId: parseInt(formState.monedaId), // Convertir a cadena de texto
+          fechaInicio: fechaISO,
         };
         const idJugador = parseInt(id);
         console.log( {createPartidaDto: formData, idJugador});
@@ -113,15 +114,32 @@ export const CreateGamePage = () => {
                   onChange={ onInputChange }
                   autoComplete="username"
                 />
-              <label className="block font-bold text-color_secondary my-6">Fecha de inicio</label>
-              <input
-                  className="border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md "
-                  type="date"
-                  name="fechaInicio"
-                  value= { fechaInicio }
-                  placeholder={'date'}
-                  onChange={ onInputChange }
-                />
+              <div className='flex flex-row items-center my-6'>
+                <div className='basis-1/2 mr-2'>
+                  <label className="block font-bold my-6  text-color_secondary">Hora de inicio</label>
+                  <input
+                      className="border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md"
+                      type="time"
+                      name="horaInicio"
+                      value= { horaInicio }
+                      placeholder={'Hora'}
+                      onChange={ onInputChange }
+                      autoComplete=""
+                      />
+                </div>
+                <div className='basis-1/2 ml-2'>
+                  <label className="block font-bold text-color_secondary my-6">Fecha de inicio</label>
+                  <input
+                      className="border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md "
+                      type="date"
+                      name="fechaInicio"
+                      value= { fechaInicio }
+                      placeholder={'date'}
+                      onChange={ onInputChange }
+                      />
+                </div>
+              </div>
+              <div />
               <div className='flex flex-row items-center  my-6'>
                 <label className="basis-1/2 font-bold text-color_secondary">Cantidad de personas</label>
                 <input
@@ -134,12 +152,12 @@ export const CreateGamePage = () => {
                     />
               </div>
               <div className='flex flex-row items-center my-6'>
-                <label className="basis-1/2 font-bold text-color_secondary ">Monto total</label>
+                <label className="basis-1/2 font-bold text-color_secondary ">Monto inicial</label>
                 <input
                     className="basis-1/2 border bg-input bg-opacity-90 border-gray-300 px-3 py-2 w-full rounded-md"
                     type="number"
-                    name="pozo"
-                    value= { pozo }
+                    name="coutaInicial"
+                    value= { coutaInicial }
                     placeholder={'0,0'}
                     onChange={ onInputChange }
                     />
