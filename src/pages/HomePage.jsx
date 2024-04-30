@@ -20,7 +20,7 @@ export const HomePage = () => {
       try {
         const response = await api.get(`/jugadores/${ id }/participaciones`);
         if (response.status === 200) {
-          console.log(response.data.data);
+          console.log('Partidaaas', response.data.data);
           setPertidas(response.data.data);
         } else {
           console.error('Error al obtener partidas:', response.statusText);
@@ -59,7 +59,7 @@ export const HomePage = () => {
                     <h2 className="text-2xl font-bold my-8 font-sans text-secondary_dark">Mis partidas</h2>
                       <div   className='grid grid-cols-3 gap-x-28 gap-y-4 mb-24'>
                         {partidas.map( ( game ) => (
-                          <CardIcon key={game.id} title={game.partida.nombre} state={game.estado}  onClickInvite ={ () => handleClickCreate( game.partida.id, game.id,)} />
+                          <CardIcon key={game.partida.id} title={game.partida.nombre} state={game.partida.estado}  onClickInvite ={ () => handleClickCreate( game.partida.id, game.id,)} />
                           ))} 
                       </div>            
                 </div>
