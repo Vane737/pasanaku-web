@@ -167,7 +167,7 @@ export const SendInvitation = () => {
         .then((res) => {
           console.log(res);
           setMessage(
-            "Se ha iniciado la partida en 10 mins antes de comenzar la subasta"
+            "Se ha iniciado la partida, en 2 mins comenzará la subasta"
           );
           setIsOpen(true);
           obtenerInvitados();
