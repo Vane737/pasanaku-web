@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MyModalMessage } from "../../components/utils/MyModalMessage";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   PaperAirplaneIcon,
   PencilSquareIcon,
@@ -16,7 +16,6 @@ function classNames(...classes) {
 }
 
 export const SendInvitation = () => {
-  const navigate = useNavigate();
   const { idGame, idPart } = useParams();
   const { nombre, telefono, email, formState, onInputChange } = useForm({
     nombre: "",
@@ -79,7 +78,7 @@ export const SendInvitation = () => {
   useEffect(() => {
     obtenerPartida();
     obtenerInvitados();
-  }, []);
+  }, [rondas]);
 
   const obtenerPartida = async () => {
     try {
@@ -114,6 +113,7 @@ export const SendInvitation = () => {
       console.log("Error al crear invitación:", error);
     }
   };
+
   const handleAllSubmit = async () => {
     try {
       console.log(idGame);
@@ -197,7 +197,6 @@ export const SendInvitation = () => {
             >
               Iniciar Partida
             </button>
-            // <FontAwesomeIcon icon="fa-solid fa-spinner" spin />
           }
 
         </div>

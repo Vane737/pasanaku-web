@@ -1,6 +1,5 @@
 // RegisterUser.js
 import { useEffect, useState } from 'react';
-import { MyModalMessage } from '../../components/utils/MyModalMessage';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import api from '../../apiAxios/axios';
@@ -16,9 +15,7 @@ const lapsos = [
 export const CreateGamePage = () => {
   const navigate = useNavigate();
   const [monedas, setMonedas] = useState([]);
-  const [message, setMessage] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAccept, setIsAccept] = useState(false);
+
   const [selectedCoin, setSelectedCoin] = useState({});
   const [selectedLapso, setSelectedLapso] = useState(lapsos[0]);
   const id =  localStorage.getItem('id');
@@ -72,9 +69,7 @@ export const CreateGamePage = () => {
         .post(`/partida`,  {createPartidaDto: formData, idJugador})
         .then((res) => {
           console.log('Respuesta correcta',res.data.id);
-          // navigate(`partida/${ res.data.id }/invite/${ idPart }`)
           navigate('/partidas');
-
           })
           .catch((err) => {
             console.log('Ha ocurrido un error', err);
@@ -84,11 +79,6 @@ export const CreateGamePage = () => {
             console.log('entro al error try catch');
           }
         };
-
-  const closeModal = ({ open, accept }) => {
-    setIsOpen(open);
-    setIsAccept(accept);
-  };
 
   return (
     <>
@@ -209,7 +199,7 @@ export const CreateGamePage = () => {
             {/* <pre> { JSON.stringify(monedas) } </pre> */}
 
           </div>
-        {isOpen && <MyModalMessage Text={message} estados={closeModal} />}
+
       </section>
       }
     </>
