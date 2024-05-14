@@ -1,13 +1,12 @@
 
 import {Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
-
-import { MyModalMessage } from '../../components/utils/MyModalMessage';
-
 import api from '../../api/gatewayApi';
 import { useForm } from '../../hooks/useForm';
 import logo from '../../assets/Logo1.png';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/solid';
+
+
 export const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
@@ -18,9 +17,6 @@ export const Login = () => {
 
 
   const navigate = useNavigate();
-  const [message, setMessage] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [isAccept, setIsAccept] = useState(false);
   
   const handleSubmit = async (e)=>{
     e.preventDefault();
@@ -69,16 +65,6 @@ export const Login = () => {
   //     setIsOpen(true);
   //   }
   // };
-
-  const closeModal = ({ open, accept }) => {
-    setIsOpen(open);
-
-    if (accept) {
-      setIsAccept(true);
-    } else {
-      setIsAccept(false);
-    }
-  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -137,11 +123,7 @@ export const Login = () => {
           <small className='text-secondary_dark text-center'>¿No tienes una cuenta? <Link className='font-bold hover:text-secondary'>Registrarme</Link></small>
         </div>
       </form>
-
-      {/* <pre> { JSON.stringify(formState) } </pre> */}
-
     </div>
-  {isOpen && <MyModalMessage Text={message} estados={closeModal} />}
 </section>
   )
 }

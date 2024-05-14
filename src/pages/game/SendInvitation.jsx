@@ -198,7 +198,6 @@ export const SendInvitation = () => {
               Iniciar Partida
             </button>
           }
-
         </div>
       </div>
 
